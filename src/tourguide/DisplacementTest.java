@@ -119,6 +119,11 @@ public class DisplacementTest {
 		assertEquals(60.00, bearing, EPS);
 		assertEquals(2.0, distance, EPS);
 	}
+	
+	public void test359Bearing() {
+		double bearing = new Displacement(-174, 10000).bearing();
+		assertEquals(359, bearing, EPS);
+	}
 
 	@Test
 	public void test300Bearing() {
