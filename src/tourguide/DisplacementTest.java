@@ -25,12 +25,47 @@ public class DisplacementTest {
 		assertEquals(1.0, distance, EPS);
 	}
 
+	// Testing the edge cases with 1 degrees and 359 degrees.
+	@Test
+	public void test1Bearing() {
+		double bearing = new Displacement(0.01, 0.575).bearing();
+		double distance = new Displacement(0.01, 0.575).distance();
+		assertEquals(1.00, bearing, EPS);
+		assertEquals(0.575, distance, EPS);
+	}
+
+	@Test
+	public void test359Bearing() {
+		double bearing = new Displacement(-0.01, 0.575).bearing();
+		double distance = new Displacement(-0.01, 0.575).distance();
+		assertEquals(359.00, bearing, EPS);
+		assertEquals(0.575, distance, EPS);
+	}
+
+	// Tests which occur starting at 30 degrees and adding either 15 or 30
+	// degrees each step.
+	@Test
+	public void test30Bearing() {
+		double bearing = new Displacement(Math.sqrt(3.0), 3).bearing();
+		double distance = new Displacement(Math.sqrt(3.0), 3).distance();
+		assertEquals(30.00, bearing, EPS);
+		assertEquals(3.46, distance, EPS);
+	}
+
 	@Test
 	public void test45Bearing() {
 		double bearing = new Displacement(5.0, 5.0).bearing();
 		double distance = new Displacement(5.0, 5.0).distance();
 		assertEquals(45.00, bearing, EPS);
 		assertEquals(7.07, distance, EPS);
+	}
+
+	@Test
+	public void test60Bearing() {
+		double bearing = new Displacement(Math.sqrt(3.0), 1).bearing();
+		double distance = new Displacement(Math.sqrt(3.0), 1).distance();
+		assertEquals(60.00, bearing, EPS);
+		assertEquals(2.0, distance, EPS);
 	}
 
 	public void test90Bearing() {
@@ -89,6 +124,14 @@ public class DisplacementTest {
 	}
 
 	@Test
+	public void test300Bearing() {
+		double bearing = new Displacement(-Math.sqrt(3.0), 1).bearing();
+		double distance = new Displacement(-Math.sqrt(3.0), 1).distance();
+		assertEquals(300.00, bearing, EPS);
+		assertEquals(2.0, distance, EPS);
+	}
+
+	@Test
 	public void test315Bearing() {
 		double bearing = new Displacement(-75.0, 75.0).bearing();
 		double distance = new Displacement(-75.0, 75.0).distance();
@@ -97,39 +140,10 @@ public class DisplacementTest {
 	}
 
 	@Test
-	public void test30Bearing() {
-		double bearing = new Displacement(Math.sqrt(3.0), 3).bearing();
-		double distance = new Displacement(Math.sqrt(3.0), 3).distance();
-		assertEquals(30.00, bearing, EPS);
-		assertEquals(3.46, distance, EPS);
-	}
-
-	@Test
 	public void test330Bearing() {
 		double bearing = new Displacement(-Math.sqrt(3.0), 3).bearing();
 		double distance = new Displacement(-Math.sqrt(3.0), 3).distance();
 		assertEquals(330.00, bearing, EPS);
 		assertEquals(3.46, distance, EPS);
-	}
-
-	@Test
-	public void test60Bearing() {
-		double bearing = new Displacement(Math.sqrt(3.0), 1).bearing();
-		double distance = new Displacement(Math.sqrt(3.0), 1).distance();
-		assertEquals(60.00, bearing, EPS);
-		assertEquals(2.0, distance, EPS);
-	}
-	
-	public void test359Bearing() {
-		double bearing = new Displacement(-174, 10000).bearing();
-		assertEquals(359, bearing, EPS);
-	}
-
-	@Test
-	public void test300Bearing() {
-		double bearing = new Displacement(-Math.sqrt(3.0), 1).bearing();
-		double distance = new Displacement(-Math.sqrt(3.0), 1).distance();
-		assertEquals(300.00, bearing, EPS);
-		assertEquals(2.0, distance, EPS);
 	}
 }
