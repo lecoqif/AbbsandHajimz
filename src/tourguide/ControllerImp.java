@@ -13,6 +13,10 @@ import java.util.logging.Logger;
 public class ControllerImp implements Controller {
     private static Logger logger = Logger.getLogger("tourguide");
     private static final String LS = System.lineSeparator();
+    private TourLibrary tourLib = new TourLibrary();
+    private Tour test;
+    private Location loc;
+    private ArrayList<Chunk> chunkList = new ArrayList<>();
 
     private String startBanner(String messageName) {
         return  LS 
@@ -34,13 +38,20 @@ public class ControllerImp implements Controller {
     @Override
     public Status startNewTour(String id, String title, Annotation annotation) {
         logger.fine(startBanner("startNewTour"));
-        return new Status.Error("unimplemented");
+        test = new Tour(id, title, annotation);
+        tourLib.addTour(id, test);
+        Chunk ch = new Chunk.CreateHeader(title, 0, 0);
+        chunkList.add(ch);
+        return Status.OK;
     }
 
     @Override
     public Status addWaypoint(Annotation annotation) {
         logger.fine(startBanner("addWaypoint"));
-        return new Status.Error("unimplemented");
+        test.addWaypoint(loc.getLocation(), annotation);
+        Chunk ch = new Chunk.CreateHeader(test.getTitle(), 1, 1);
+        chunkList.add(ch);
+        return Status.OK;
     }
 
     @Override
@@ -88,11 +99,12 @@ public class ControllerImp implements Controller {
     //--------------------------
     @Override
     public void setLocation(double easting, double northing) {
+    	loc = new Location(easting, northing);
     }
 
     @Override
     public List<Chunk> getOutput() {
-        return new ArrayList<Chunk>();
+        return chunkList;
     }
 
 

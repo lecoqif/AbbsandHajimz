@@ -111,6 +111,13 @@ public class ControllerTest {
     }
     
     @Test
+    public void easyTest() {
+    	checkStatus(controller.startNewTour( "T1", 
+                "Informatics at UoE", 
+                ann("The Informatics Forum and Appleton Tower\n")));
+    }
+    
+    @Test
     public void testAddOnePointTour() { 
         logger.info(makeBanner("testAddOnePointTour"));
         
