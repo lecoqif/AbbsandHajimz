@@ -1,8 +1,10 @@
 package tourguide;
 
 import java.util.LinkedList;
+import java.util.logging.Logger;
 
 public class Tour {
+	private static Logger logger = Logger.getLogger("tourguide");
 	private String id;
 	private String title;
 	private Annotation annotation;
@@ -14,6 +16,7 @@ public class Tour {
 		this.annotation = annotation; 
 	}
 	public void addWaypoint(Location loc, Annotation annotation){
+		logger.finer("Creating Waypoint");
 		Waypoint wayPoint = new Waypoint(loc, annotation);
 		listOfWaypoints.add(wayPoint);
 	}
@@ -29,6 +32,7 @@ public class Tour {
 		return listOfWaypoints.size();
 	}
 	public void addLeg(Annotation annotation){
+		logger.finer("Creating leg");
 		Leg leg = new Leg(annotation);
 		listOfLegs.add(leg);
 	}
