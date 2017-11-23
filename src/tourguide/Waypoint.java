@@ -7,4 +7,7 @@ public class Waypoint {
 		this.loc = loc;
 		this.annotation = annotation;
 	}
+	public Location getLoc() {
+		return new Location(loc.getEasting(), loc.getNorthing());
+	}
 }

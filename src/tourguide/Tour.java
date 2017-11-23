@@ -20,4 +20,19 @@ public class Tour {
 	public String getTitle() {
 		return title;
 	}
+	
+	public int numberOfLegs() {
+		return listOfLegs.size();
+	}
+	
+	public int numberOfWaypoints() {
+		return listOfWaypoints.size();
+	}
+	public void addLeg(Annotation annotation){
+		Leg leg = new Leg(annotation);
+		listOfLegs.add(leg);
+	}
+	public Location getLastWaypoint() {
+		return listOfWaypoints.get(listOfWaypoints.size() - 1).getLoc();
+	}
 }

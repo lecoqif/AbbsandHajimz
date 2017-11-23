@@ -112,9 +112,34 @@ public class ControllerTest {
     
     @Test
     public void easyTest() {
-    	checkStatus(controller.startNewTour( "T1", 
-                "Informatics at UoE", 
-                ann("The Informatics Forum and Appleton Tower\n")));
+    	logger.info(makeBanner("easyTest"));
+    	checkStatus(
+                controller.startNewTour("T2", "Old Town", ann("From Edinburgh Castle to Holyrood\n"))
+                );
+        
+        checkOutput(1, 0, new Chunk.CreateHeader("Old Town", 0,  0));
+      
+        controller.setLocation(-500, 0);
+        
+        // Leg before this waypoint with default annotation added at same time
+        checkStatus( controller.addWaypoint(ann("Edinburgh Castle\n")) );     
+        
+        checkOutput(2, 1, new Chunk.CreateHeader("Old Town", 1,  1));
+  
+        checkStatus( controller.addLeg(ann("Royal Mile\n")) );
+  
+        checkOutput(3, 2, new Chunk.CreateHeader("Old Town", 2,  1) );
+      
+        checkStatusNotOK( 
+                controller.endNewTour()
+                );
+  
+        controller.setLocation(1000, 300);
+               
+        checkStatus( controller.addWaypoint(ann("Holyrood Palace\n")) );
+
+        checkOutput(4, 3, new Chunk.CreateHeader("Old Town", 2,  2) );
+    	
     }
     
     @Test

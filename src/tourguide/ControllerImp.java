@@ -17,6 +17,8 @@ public class ControllerImp implements Controller {
     private Tour test;
     private Location loc;
     private ArrayList<Chunk> chunkList = new ArrayList<>();
+    private double waypointRadius;
+    private double waypointSeparation;
 
     private String startBanner(String messageName) {
         return  LS 
@@ -26,6 +28,8 @@ public class ControllerImp implements Controller {
     }
     
     public ControllerImp(double waypointRadius, double waypointSeparation) {
+    	this.waypointRadius = waypointRadius;
+    	this.waypointSeparation = waypointSeparation;
     }
 
     //--------------------------
@@ -48,8 +52,19 @@ public class ControllerImp implements Controller {
     @Override
     public Status addWaypoint(Annotation annotation) {
         logger.fine(startBanner("addWaypoint"));
-        test.addWaypoint(loc.getLocation(), annotation);
-        Chunk ch = new Chunk.CreateHeader(test.getTitle(), 1, 1);
+        if(test.numberOfWaypoints() > 0){
+        	Location a = loc;
+        	Location b = test.getLastWaypoint();
+        	double dist = new Displacement(a.getEasting() - b.getEasting(), a.getNorthing() - b.getNorthing()).distance();
+        	if(dist < waypointSeparation) return new Status.Error("Waypoint is too close to the previous one.");
+        }
+        if(test.numberOfLegs() == (test.numberOfWaypoints())){
+        	test.addLeg(Annotation.getDefault());
+        	test.addWaypoint(loc.getLocation(), annotation);
+        } else {        	
+        	test.addWaypoint(loc.getLocation(), annotation);
+        } 
+        Chunk ch = new Chunk.CreateHeader(test.getTitle(), test.numberOfLegs(), test.numberOfWaypoints());
         chunkList.add(ch);
         return Status.OK;
     }
@@ -57,7 +72,15 @@ public class ControllerImp implements Controller {
     @Override
     public Status addLeg(Annotation annotation) {
         logger.fine(startBanner("addLeg"));
-        return new Status.Error("unimplemented");
+        
+        if(test.numberOfLegs() == test.numberOfWaypoints()){
+        	test.addLeg(annotation);
+        	Chunk ch = new Chunk.CreateHeader(test.getTitle(), test.numberOfLegs(), test.numberOfWaypoints());
+        	chunkList.add(ch);
+        	return Status.OK;
+        } else {
+        	return new Status.Error("No waypoint between legs.");
+        }
     }
 
     @Override

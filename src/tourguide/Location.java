@@ -10,4 +10,10 @@ public class Location {
 	public Location getLocation(){
 		return new Location(easting, northing);
 	}
+	public double getEasting() {
+		return easting;
+	}
+	public double getNorthing() {
+		return northing;
+	}
 }
