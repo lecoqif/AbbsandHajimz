@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
+import tourguide.Mode.TourMode;
+
 /**
  * @author pbj
  */
@@ -19,6 +21,7 @@ public class ControllerImp implements Controller {
     private ArrayList<Chunk> chunkList = new ArrayList<>();
     private double waypointRadius;
     private double waypointSeparation;
+    private Mode obj = new Mode();
 
     private String startBanner(String messageName) {
         return  LS 
@@ -42,51 +45,75 @@ public class ControllerImp implements Controller {
     @Override
     public Status startNewTour(String id, String title, Annotation annotation) {
         logger.fine(startBanner("startNewTour"));
-        test = new Tour(id, title, annotation);
-        tourLib.addTour(id, test);
-        Chunk ch = new Chunk.CreateHeader(title, 0, 0);
-        chunkList.add(ch);
-        return Status.OK;
+        if(obj.getMode() == TourMode.BROWSEMAIN) {
+        	  obj.setMode(TourMode.CREATE);
+        	  test = new Tour(id, title, annotation);
+              tourLib.addTour(id, test);
+              Chunk ch = new Chunk.CreateHeader(title, 0, 0);
+              chunkList.add(ch);
+              return Status.OK;
+        } else {
+        	return new Status.Error("Not in the right mode!");
+        }
+      
     }
 
     @Override
     public Status addWaypoint(Annotation annotation) {
         logger.fine(startBanner("addWaypoint"));
-        if(test.numberOfWaypoints() > 0){
-        	Location a = loc;
-        	Location b = test.getLastWaypoint();
-        	double dist = new Displacement(a.getEasting() - b.getEasting(), a.getNorthing() - b.getNorthing()).distance();
-        	if(dist < waypointSeparation) return new Status.Error("Waypoint is too close to the previous one.");
+        if(obj.getMode() == TourMode.CREATE){
+        	if(test.numberOfWaypoints() > 0){
+            	Location a = loc;
+            	Location b = test.getLastWaypoint();
+            	double dist = new Displacement(a.getEasting() - b.getEasting(), a.getNorthing() - b.getNorthing()).distance();
+            	if(dist < waypointSeparation) return new Status.Error("Waypoint is too close to the previous one.");
+            }
+            if(test.numberOfLegs() == (test.numberOfWaypoints())){
+            	test.addLeg(Annotation.getDefault());
+            	test.addWaypoint(loc.getLocation(), annotation);
+            } else {        	
+            	test.addWaypoint(loc.getLocation(), annotation);
+            } 
+            Chunk ch = new Chunk.CreateHeader(test.getTitle(), test.numberOfLegs(), test.numberOfWaypoints());
+            chunkList.add(ch);
+            return Status.OK;
+        } else {
+        	return new Status.Error("Not in the right mode!");
         }
-        if(test.numberOfLegs() == (test.numberOfWaypoints())){
-        	test.addLeg(Annotation.getDefault());
-        	test.addWaypoint(loc.getLocation(), annotation);
-        } else {        	
-        	test.addWaypoint(loc.getLocation(), annotation);
-        } 
-        Chunk ch = new Chunk.CreateHeader(test.getTitle(), test.numberOfLegs(), test.numberOfWaypoints());
-        chunkList.add(ch);
-        return Status.OK;
+        
     }
 
     @Override
     public Status addLeg(Annotation annotation) {
         logger.fine(startBanner("addLeg"));
-        
-        if(test.numberOfLegs() == test.numberOfWaypoints()){
-        	test.addLeg(annotation);
-        	Chunk ch = new Chunk.CreateHeader(test.getTitle(), test.numberOfLegs(), test.numberOfWaypoints());
-        	chunkList.add(ch);
-        	return Status.OK;
+        if(obj.getMode() == TourMode.CREATE){
+        	if(test.numberOfLegs() == test.numberOfWaypoints()){
+            	test.addLeg(annotation);
+            	Chunk ch = new Chunk.CreateHeader(test.getTitle(), test.numberOfLegs(), test.numberOfWaypoints());
+            	chunkList.add(ch);
+            	return Status.OK;
+            } else {
+            	return new Status.Error("No waypoint between legs.");
+            }
         } else {
-        	return new Status.Error("No waypoint between legs.");
-        }
+        	return new Status.Error("Not in the right mode!");
+        }        
     }
 
     @Override
     public Status endNewTour() {
         logger.fine(startBanner("endNewTour"));
-        return new Status.Error("unimplemented");
+        if(obj.getMode() == TourMode.CREATE){
+        	if(test.numberOfWaypoints() <= 0) {
+        		return new Status.Error("No waypoints in tour!");
+        	} else if(test.numberOfLegs() != test.numberOfWaypoints()) {
+        		return new Status.Error("Too many legs!");
+        	} else {
+        		obj.setMode(TourMode.BROWSEMAIN);
+        		return Status.OK;
+        	}
+        }
+        return new Status.Error("Not in the right mode!");
     }
 
     //--------------------------
@@ -127,7 +154,10 @@ public class ControllerImp implements Controller {
 
     @Override
     public List<Chunk> getOutput() {
-        return chunkList;
+    	List<Chunk> tmp = new ArrayList<Chunk>(chunkList);
+    	chunkList.clear();
+        return tmp;
+        
     }
 
 
