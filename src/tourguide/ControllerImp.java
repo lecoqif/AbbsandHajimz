@@ -24,7 +24,7 @@ public class ControllerImp implements Controller {
 	private double waypointRadius;
 	private double waypointSeparation;
 	private Mode obj = new Mode();
-	private Chunk.BrowseDetails bd;
+	private String browseID;
 
 	private String startBanner(String messageName) {
 		return LS + "-------------------------------------------------------------" + LS + "MESSAGE: " + messageName
@@ -122,16 +122,15 @@ public class ControllerImp implements Controller {
 
 	@Override
 	public Status showTourDetails(String tourID) {
-		if(obj.getMode() == TourMode.BROWSEMAIN){
-			obj.setMode(TourMode.BROWSESPECIFIC);
-			chunkList.clear();
-			if((!tourLib.getMap().isEmpty()) && tourLib.getMap().containsKey(tourID)){
-				Tour tour = tourLib.getMap().get(tourID);
-				bd = new Chunk.BrowseDetails(tour.getID(), tour.getTitle(), tour.getAnnotation());
-				return Status.OK;
-			} else {
+		if (obj.getMode() == TourMode.BROWSEMAIN) {
+			if (tourLib.getMap().isEmpty() || (!tourLib.getMap().containsKey(tourID))) {
 				return new Status.Error("Tour does not exist.");
 			}
+			obj.setMode(TourMode.BROWSESPECIFIC);
+			chunkList.clear();
+			browseID = new String(tourID);
+			return Status.OK;
+
 		} else {
 			return new Status.Error("Not in the right mode!");
 		}
@@ -170,19 +169,21 @@ public class ControllerImp implements Controller {
 			Chunk ch = new Chunk.CreateHeader(test.getTitle(), test.numberOfLegs(), test.numberOfWaypoints());
 			chunkList.add(ch);
 		}
-		if(obj.getMode() == TourMode.BROWSEMAIN){
+		if (obj.getMode() == TourMode.BROWSEMAIN) {
 			Chunk.BrowseOverview ch = new Chunk.BrowseOverview();
-			if(!(tourLib.getMap().isEmpty())){
-				for(Map.Entry<String, Tour> tester : tourLib.getMap().entrySet()){
+			if (!(tourLib.getMap().isEmpty())) {
+				for (Map.Entry<String, Tour> tester : tourLib.getMap().entrySet()) {
 					String id = tester.getKey();
 					String title = tester.getValue().getTitle();
-					ch.addIdAndTitle(id, title);					
+					ch.addIdAndTitle(id, title);
 				}
 			}
 			chunkList.add(ch);
 		}
-		if(obj.getMode() == TourMode.BROWSESPECIFIC){
-			chunkList.add(bd);
+		if (obj.getMode() == TourMode.BROWSESPECIFIC) {
+			Tour tour = tourLib.getMap().get(browseID);
+			Chunk.BrowseDetails ch = new Chunk.BrowseDetails(tour.getID(), tour.getTitle(), tour.getAnnotation());
+			chunkList.add(ch);
 		}
 		List<Chunk> tmp = new LinkedList<Chunk>(chunkList);
 		chunkList.clear();

@@ -119,6 +119,11 @@ public class ControllerTest {
 		overview.addIdAndTitle("T1", "Informatics at UoE");
 		overview.addIdAndTitle("T2", "Old Town");
 		checkOutput(1, 0, overview);
+		
+		checkStatusNotOK(controller.showTourDetails("T3"));
+		
+		checkStatus(controller.showTourDetails("T1"));
+		checkOutput(1, 0,	new Chunk.BrowseDetails("T1", "Informatics at UoE", ann("The Informatics Forum and Appleton Tower\n")));
 
 	}
 
