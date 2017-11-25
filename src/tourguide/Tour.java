@@ -10,32 +10,45 @@ public class Tour {
 	private Annotation annotation;
 	private LinkedList<Waypoint> listOfWaypoints = new LinkedList<>();
 	private LinkedList<Leg> listOfLegs = new LinkedList<>();
-	public Tour(String id, String title, Annotation annotation){
+
+	public Tour(String id, String title, Annotation annotation) {
 		this.id = id;
 		this.title = title;
-		this.annotation = annotation; 
+		this.annotation = annotation;
 	}
-	public void addWaypoint(Location loc, Annotation annotation){
+
+	public void addWaypoint(Location loc, Annotation annotation) {
 		logger.finer("Creating Waypoint");
 		Waypoint wayPoint = new Waypoint(loc, annotation);
 		listOfWaypoints.add(wayPoint);
 	}
+
 	public String getTitle() {
 		return title;
 	}
-	
+
+	public String getID() {
+		return id;
+	}
+
 	public int numberOfLegs() {
 		return listOfLegs.size();
 	}
-	
+
 	public int numberOfWaypoints() {
 		return listOfWaypoints.size();
 	}
-	public void addLeg(Annotation annotation){
+	
+	public Annotation getAnnotation() {
+		return annotation;
+	}
+
+	public void addLeg(Annotation annotation) {
 		logger.finer("Creating leg");
 		Leg leg = new Leg(annotation);
 		listOfLegs.add(leg);
 	}
+
 	public Location getLastWaypoint() {
 		return listOfWaypoints.get(listOfWaypoints.size() - 1).getLoc();
 	}

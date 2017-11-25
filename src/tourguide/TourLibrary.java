@@ -1,10 +1,14 @@
 package tourguide;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 
 public class TourLibrary {
-	public HashMap<String, Tour> library = new HashMap<String, Tour>();
+	private LinkedHashMap<String, Tour> library = new LinkedHashMap<String, Tour>();
 	
 	public void addTour(String id, Tour tour){
 		library.put(id, tour);
+	}
+	
+	public LinkedHashMap<String, Tour> getMap() {
+		return library;
 	}
 }

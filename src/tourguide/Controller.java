@@ -4,35 +4,36 @@ import java.util.List;
 
 public interface Controller {
 
-    /*
-     * Create tour mode
-     */
-    Status startNewTour(String id, String title, Annotation annotation);
+	/*
+	 * Create tour mode
+	 */
+	Status startNewTour(String id, String title, Annotation annotation);
 
-    Status addWaypoint(Annotation annotation);
+	Status addWaypoint(Annotation annotation);
 
-    Status addLeg(Annotation annotation);
+	Status addLeg(Annotation annotation);
 
-    Status endNewTour();
-    
-    /*
-     * Browse tours mode
-     */
-    Status showTourDetails(String id);
+	Status endNewTour();
 
-    Status showToursOverview();
+	/*
+	 * Browse tours mode
+	 */
+	Status showTourDetails(String id);
 
-    /*
-     * Follow tour
-     */
-    Status followTour(String id);
+	Status showToursOverview();
 
-    Status endSelectedTour();
+	/*
+	 * Follow tour
+	 */
+	Status followTour(String id);
 
-    /*
-     *  All modes
-     */
-    void setLocation(double easting, double northing);
+	Status endSelectedTour();
 
-    List<Chunk> getOutput();
+	/*
+	 * All modes
+	 */
+	void setLocation(double easting, double northing);
+
+	List<Chunk> getOutput();
+
 }
