@@ -107,6 +107,101 @@ public class ControllerTest {
 		checkStatus(controller.endNewTour());
 
 	}
+	
+	@Test
+	public void testAddOnePointTour() {
+		logger.info(makeBanner("testAddOnePointTour"));
+
+		addOnePointTour();
+	}
+	
+	//Checks that you cannot make two waypoints too close to eachother.
+	private void twoWaypointsDistance() {
+		checkStatus(controller.startNewTour("Test", "Somewhere", ann("Two close places")));
+
+		controller.setLocation(50, 0);
+
+		checkStatus(controller.addWaypoint(ann("Here")));
+
+		checkStatus(controller.addLeg(ann("Steps")));
+
+		controller.setLocation(74, 0);
+
+		checkStatusNotOK(controller.addWaypoint(ann("There")));
+	}
+	
+	@Test
+	public void testTwoWaypointDistance() {
+		logger.info(makeBanner("testTwoWaypointsDistance"));
+		
+		twoWaypointsDistance();
+	}
+	
+	//Checks that you cannot add two legs in a row.
+	private void twoLegsInARow() {
+		
+		checkStatus(
+				controller.startNewTour("Test2", "SomewhereMan", ann("Two legs my friend")));
+
+		controller.setLocation(300, -500);
+
+		checkStatus(controller.addLeg(ann("This way")));
+		
+		checkStatusNotOK(controller.addLeg(ann("That way")));
+		
+	}
+	
+	@Test
+	public void testTwoLegsInARow() {
+		logger.info(makeBanner("testTwoLegsInARow"));
+		
+		twoLegsInARow();
+	}
+	
+	//Checks that you cannot add two waypoints in a row.
+	private void twoWaypointsInARow() {
+		
+		checkStatus(controller.startNewTour("T2", "Old Town", ann("From Edinburgh Castle to Holyrood\n")));
+
+		checkOutput(1, 0, new Chunk.CreateHeader("Old Town", 0, 0));
+
+		controller.setLocation(-500, 0);
+
+		checkStatus(controller.addWaypoint(ann("Edinburgh Castle\n")));
+		
+		checkStatusNotOK(controller.addWaypoint(ann("Edinburgh Castle\n")));
+		
+	}
+	
+	@Test
+	public void testTwoWaypointsInARow() {
+		logger.info(makeBanner("testTwoWaypointsInARow"));
+		
+		twoWaypointsInARow();
+	}
+	
+	//Checks that you do not finish the tour on a leg.
+	
+	private void endTourOnLeg() {
+		
+		checkStatus(
+				controller.startNewTour("T1", "Informatics at UoE", ann("The Informatics Forum and Appleton Tower\n")));
+
+		checkOutput(1, 0, new Chunk.CreateHeader("Informatics at UoE", 0, 0));
+
+		controller.setLocation(300, -500);
+
+		checkStatus(controller.addLeg(ann("Start at NE corner of George Square\n")));
+		
+		checkStatusNotOK(controller.endNewTour());
+	}
+	
+	@Test 
+	public void testEndTourOnLeg() {
+		logger.info(makeBanner("testEndTourOnLeg"));
+		
+		endTourOnLeg();
+	}
 
 	@Test
 	public void easyTest() {
@@ -127,12 +222,7 @@ public class ControllerTest {
 
 	}
 
-	@Test
-	public void testAddOnePointTour() {
-		logger.info(makeBanner("testAddOnePointTour"));
 
-		addOnePointTour();
-	}
 
 	private void addTwoPointTour() {
 		checkStatus(controller.startNewTour("T2", "Old Town", ann("From Edinburgh Castle to Holyrood\n")));
