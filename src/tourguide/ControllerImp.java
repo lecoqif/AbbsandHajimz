@@ -25,7 +25,7 @@ public class ControllerImp implements Controller {
 	private double waypointSeparation;
 	private Mode obj = new Mode();
 	private String browseID;
-	private int cStage;
+	private int cStage = 0;
 	private Tour cTour;
 	private double distToWaypoint;
 	private double bearingToWaypoint;
@@ -142,7 +142,14 @@ public class ControllerImp implements Controller {
 
 	@Override
 	public Status showToursOverview() {
-		return new Status.Error("unimplemented");
+		if(obj.getMode() == TourMode.BROWSEMAIN){
+			return Status.OK;
+		} else if (obj.getMode() == TourMode.BROWSESPECIFIC){
+			obj.setMode(TourMode.BROWSEMAIN);
+			return Status.OK;
+		} else {
+			return new Status.Error("Not in the right mode!");
+		}
 	}
 
 	// --------------------------
@@ -155,9 +162,13 @@ public class ControllerImp implements Controller {
 			if(tourLib.getMap().containsKey(id)){
 				obj.setMode(TourMode.FOLLOW);
 				cTour = tourLib.getMap().get(id);
-				cStage = 0;
+				//cStage = 0;
 				Displacement tmp = new Displacement(cTour.getWaypointLoc(cStage).getEasting() - loc.getEasting(), cTour.getWaypointLoc(cStage).getNorthing() - loc.getNorthing());
 				distToWaypoint = tmp.distance();
+				if(distToWaypoint <= waypointRadius){
+					cStage++;
+					followTour(cTour.getID());
+				}
 				bearingToWaypoint = tmp.bearing();
 				return Status.OK;
 			} else {
