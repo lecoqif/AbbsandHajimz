@@ -286,6 +286,7 @@ public class ControllerTest {
 				new Chunk.BrowseDetails("T1", "Informatics at UoE", ann("The Informatics Forum and Appleton Tower\n")));
 	}
 
+	/*
 	@Test
 	public void followOldTownTour() {
 		logger.info(makeBanner("followOldTownTour"));
@@ -327,5 +328,5 @@ public class ControllerTest {
 		checkOutput(1, 0, overview);
 
 	}
-
+*/
 }

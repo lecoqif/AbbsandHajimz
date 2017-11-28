@@ -1,3 +1,8 @@
+/**
+ * @param e How east the user is from the centre reference point in metres.
+ * @param n How north the user is from the centre reference point in metres.
+ * @return The users displacement from the reference point as well as the bearing from it.
+ */
 package tourguide;
 
 import java.util.logging.Logger;

@@ -182,7 +182,12 @@ public class ControllerImp implements Controller {
 
 	@Override
 	public Status endSelectedTour() {
-		return new Status.Error("unimplemented");
+		if(obj.getMode() == TourMode.FOLLOW){
+			obj.setMode(TourMode.BROWSEMAIN);
+			return Status.OK;
+		} else {
+			return new Status.Error("Not in the right mode!");
+		}
 	}
 
 	// --------------------------
