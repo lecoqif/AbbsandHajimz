@@ -5,4 +5,7 @@ public class Leg {
 	public Leg(Annotation annotation){
 		this.annotation = annotation;
 	}
+	public Annotation getAnnotation(){
+		return annotation;
+	}
 }

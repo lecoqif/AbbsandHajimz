@@ -25,6 +25,10 @@ public class ControllerImp implements Controller {
 	private double waypointSeparation;
 	private Mode obj = new Mode();
 	private String browseID;
+	private int cStage;
+	private Tour cTour;
+	private double distToWaypoint;
+	private double bearingToWaypoint;
 
 	private String startBanner(String messageName) {
 		return LS + "-------------------------------------------------------------" + LS + "MESSAGE: " + messageName
@@ -147,7 +151,22 @@ public class ControllerImp implements Controller {
 
 	@Override
 	public Status followTour(String id) {
-		return new Status.Error("unimplemented");
+		if(obj.getMode() == TourMode.BROWSEMAIN || obj.getMode() == TourMode.FOLLOW){
+			if(tourLib.getMap().containsKey(id)){
+				obj.setMode(TourMode.FOLLOW);
+				cTour = tourLib.getMap().get(id);
+				cStage = 0;
+				Displacement tmp = new Displacement(cTour.getWaypointLoc(cStage).getEasting() - loc.getEasting(), cTour.getWaypointLoc(cStage).getNorthing() - loc.getNorthing());
+				distToWaypoint = tmp.distance();
+				bearingToWaypoint = tmp.bearing();
+				return Status.OK;
+			} else {
+				return new Status.Error("Tour does not exist!");
+			}
+			
+		} else {
+			return new Status.Error("Not in the right mode!");
+		}		
 	}
 
 	@Override
@@ -161,6 +180,9 @@ public class ControllerImp implements Controller {
 	@Override
 	public void setLocation(double easting, double northing) {
 		loc = new Location(easting, northing);
+		if(obj.getMode()==TourMode.FOLLOW){
+			followTour(cTour.getID());
+		}
 	}
 
 	@Override
@@ -184,6 +206,14 @@ public class ControllerImp implements Controller {
 			Tour tour = tourLib.getMap().get(browseID);
 			Chunk.BrowseDetails ch = new Chunk.BrowseDetails(tour.getID(), tour.getTitle(), tour.getAnnotation());
 			chunkList.add(ch);
+		}
+		if(obj.getMode() == TourMode.FOLLOW){
+			Chunk.FollowHeader ch = new Chunk.FollowHeader(cTour.getTitle(), cStage, cTour.numberOfWaypoints());
+			Chunk.FollowLeg ch1 = new Chunk.FollowLeg(cTour.getLegAnn(cStage));
+			Chunk.FollowBearing ch2 = new Chunk.FollowBearing(bearingToWaypoint, distToWaypoint);
+			chunkList.add(ch); 
+			chunkList.add(ch1);
+			chunkList.add(ch2);
 		}
 		List<Chunk> tmp = new LinkedList<Chunk>(chunkList);
 		chunkList.clear();

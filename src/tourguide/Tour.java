@@ -52,4 +52,13 @@ public class Tour {
 	public Location getLastWaypoint() {
 		return listOfWaypoints.get(listOfWaypoints.size() - 1).getLoc();
 	}
+	public Annotation getLegAnn(int cStage){
+		Leg tmp = listOfLegs.get(cStage);
+		return tmp.getAnnotation();
+	}
+	
+	public Location getWaypointLoc(int cStage){
+		Waypoint tmp = listOfWaypoints.get(cStage);
+		return tmp.getLoc();
+	}
 }
