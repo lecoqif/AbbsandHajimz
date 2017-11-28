@@ -1,7 +1,6 @@
 /**
- * @param e How east the user is from the centre reference point in metres.
- * @param n How north the user is from the centre reference point in metres.
- * @return The users displacement from the reference point as well as the bearing from it.
+ * Provides the ability to get a distance and bearing from
+ * a central reference point given a set of coordinates.
  */
 package tourguide;
 
@@ -9,9 +8,17 @@ import java.util.logging.Logger;
 
 public class Displacement {
     private static Logger logger = Logger.getLogger("tourguide");
-       
+    /**
+     * These are the parameters that are used by the class.
+     */
     public double east;
     public double north;
+    
+    /**
+     * Class constructor taking in an east and a north coordinate.
+     * @param e represents the east coordinate with reference to the centre.
+     * @param n represents the north coordinate with reference to the centre.
+     */
     
     public Displacement(double e, double n) {
         logger.finer("East: " + e + "  North: "  + n);
@@ -20,6 +27,12 @@ public class Displacement {
         north = n;
     }
     
+    /**
+     * Function for finding the distance from the input coordinates
+     * to the origin.
+     * @return the absolute value of the distance 
+     */
+    
     public double distance() {
         logger.finer("Entering");
         
@@ -27,6 +40,11 @@ public class Displacement {
     }
     
     // Bearings measured clockwise from north direction.
+    /**
+     * Function for finding the bearing as measured clockwise from
+     * the north direction.
+     * @return the angle of the coordinates from the centre
+     */
     public double bearing() {
         logger.finer("Entering");
               
